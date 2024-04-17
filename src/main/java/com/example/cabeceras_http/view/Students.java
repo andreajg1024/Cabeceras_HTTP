@@ -1,5 +1,8 @@
 package com.example.cabeceras_http.view;
 
+import com.example.cabeceras_http.mapping.StudentsDto;
+import com.example.cabeceras_http.model.Students;
+import com.example.cabeceras_http.service.StudentService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -8,13 +11,14 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
 @WebServlet ({"/students.xls", "/students.html", "/students"})
 public class StudentXLS extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException,
             IOException {
-        List<StudentsDto> students = service.listar();
+        List<StudentsDto> students = StudentService.listar();
         resp.setContentType("text/html;charset=UTF-8");
         String servletPath = req.getServletPath();
         boolean esXls = servletPath.endsWith(".xls");
@@ -23,7 +27,7 @@ public class StudentXLS extends HttpServlet {
             resp.setHeader("Content-Disposition", "attachment;filename=students.xls");
         }
         try (PrintWriter out = resp.getWriter()) {
-            if(!esXls) {
+            if (!esXls) {
                 out.println("<!DOCTYPE html>");
                 out.println("<html>");
                 out.println(" <head>");
@@ -32,8 +36,7 @@ public class StudentXLS extends HttpServlet {
                 out.println(" </head>");
                 out.println(" <body>");
                 out.println(" <h1>Listado de Estudiantes!</h1>");
-                out.println("<p><a href=\"" + req.getContextPath() + "/students.xls" + "\">exportar a
-                        xls</a></p>");
+                out.println("<p><a href=\"" + req.getContextPath() + "/students.xls" + "\">exportar a xls</a></p>");
             }
             out.println("<table>");
             out.println("<tr>");
@@ -42,7 +45,7 @@ public class StudentXLS extends HttpServlet {
             out.println("<th>tipo</th>");
             out.println("<th>precio</th>");
             out.println("</tr>");
-            students.forEach(p ->{
+            students.forEach(p -> {
                 out.println("<tr>");
                 out.println("<td>" + p.getId() + "</td>");
                 out.println("<td>" + p.getName() + "</td>");
@@ -51,10 +54,11 @@ public class StudentXLS extends HttpServlet {
                 out.println("</tr>");
             });
             out.println("</table>");
-            if(!esXls) {
+            if (!esXls) {
                 out.println(" </body>");
                 out.println("</html>");
 
             }
         }
+    }
     }
